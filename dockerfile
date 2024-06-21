@@ -1,30 +1,32 @@
-FROM ubuntu:22.04
+FROM ubuntu:latest
 
-ARG UNAME=developer
-ARG UID=1000
-ARG GID=1000
-
-ARG UHOME=/home/$UNAME
-RUN groupadd -g $GID -o $UNAME
-RUN useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME
-
-RUN apt-get update
-RUN apt-get -y install --no-install-recommends \
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    wget \
     git \
-    curl \
-    make \
-    python3 \
-    python3-pip \
-    wget
+    python3 \ 
+    python3-pip \ 
+    python3-venv \
+    gcc \
+    zlib1g-dev \
+ && apt-get autoclean && apt-get clean && apt-get -y autoremove \
+ && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install -U setuptools wheel
+# Venv
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+RUN pip3 install -U setuptools wheel \
+ && rm -rf ~/.cache
 
 # Install latest VUnit
 RUN git clone https://github.com/VUnit/vunit.git --recurse-submodules
-RUN pip install -e vunit
+RUN pip install -e vunit \
+ && rm -rf ~/.cache
 RUN rm -rf vunit
 
-# Install OSS cad suite (includes GHDL, Yosys etc)
+# Install OSS CAD suite (includes GHDL, Yosys etc)
 ENV OSS_RELEASE_YEAR=2024
 ENV OSS_RELEASE_MONTH=06
 ENV OSS_RELEASE_DAY=20

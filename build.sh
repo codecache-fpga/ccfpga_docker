@@ -1,1 +1,2 @@
-docker build -t ccfpga/vunit_oss:latest .
+
+docker build -t ccfpga/vunit-oss:latest .
