@@ -17,14 +17,9 @@ ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-RUN pip3 install -U setuptools wheel \
+# VUnit
+RUN pip3 install vunit_hdl==4.7.0 \
  && rm -rf ~/.cache
-
-# Install latest VUnit
-RUN git clone https://github.com/VUnit/vunit.git --recurse-submodules
-RUN pip install -e vunit \
- && rm -rf ~/.cache
-RUN rm -rf vunit
 
 # Install OSS CAD suite (includes GHDL, Yosys etc)
 ENV OSS_RELEASE_YEAR=2024
